@@ -125,6 +125,7 @@ export function RaffleControl() {
           batch.update(doc.ref, {
             rank: null,
             has_participated: false,
+            has_joined: false,
             updated_at: serverTimestamp(),
           });
           operationCount++;
@@ -143,6 +144,7 @@ export function RaffleControl() {
           await updateDoc(doc.ref, {
             rank: null,
             has_participated: false,
+            has_joined: false,
             updated_at: serverTimestamp(),
           });
         }

@@ -46,7 +46,7 @@ export function CodeEntry({ onCodeValidated }: CodeEntryProps) {
       } as User;
 
       // Mark user as joined (if not already joined)
-      if (!userData.has_joined) {
+      if (userData.has_joined !== true) {
         try {
           const userRef = getUserDoc(userId);
           await updateDoc(userRef, {

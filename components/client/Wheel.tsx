@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { userStorage } from "@/lib/utils/storage";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ClientLeaderboard } from "./ClientLeaderboard";
 
 interface WheelProps {
   userName: string;
@@ -141,14 +142,16 @@ export function Wheel({ userName, userId, onCardSelected, onError }: WheelProps)
     return colors[index % colors.length];
   };
 
+  const showWheel = !selectedRank; // Hide wheel after user has spun
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Welcome, {userName}!</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Spin the wheel to reveal your rank
+              {selectedRank ? "Your rank has been assigned!" : "Spin the wheel to reveal your rank"}
             </p>
           </div>
           <Button variant="outline" onClick={handleSwitchUser}>
@@ -156,103 +159,135 @@ export function Wheel({ userName, userId, onCardSelected, onError }: WheelProps)
           </Button>
         </div>
 
-        <div className="flex flex-col items-center justify-center space-y-8">
-          {/* Wheel Container */}
-          <div className="relative">
-            {/* Pointer at top */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-              <div className="w-0 h-0 border-l-[20px] border-r-[20px] border-t-[30px] border-l-transparent border-r-transparent border-t-red-500"></div>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Wheel Section or Result Card */}
+          {showWheel ? (
+            <div className="flex flex-col items-center justify-center space-y-8">
+              {/* Wheel Container */}
+              <div className="relative">
+                {/* Pointer at top */}
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                  <div className="w-0 h-0 border-l-[20px] border-r-[20px] border-t-[30px] border-l-transparent border-r-transparent border-t-red-500"></div>
+                </div>
 
-            {/* Wheel */}
-            <div
-              className="relative w-80 h-80 rounded-full shadow-2xl border-4 border-white dark:border-gray-700"
-              style={{
-                transform: `rotate(${rotation}deg)`,
-                transition: isSpinning ? 'none' : 'transform 1s cubic-bezier(0.17, 0.67, 0.12, 0.99)',
-                background: `conic-gradient(from -90deg, ${Array.from({ length: sections })
-                  .map((_, i) => {
-                    const color = getSectionColor(i);
-                    const startPercent = (i / sections) * 100;
-                    const endPercent = ((i + 1) / sections) * 100;
-                    return `${color} ${startPercent}% ${endPercent}%`;
-                  })
-                  .join(', ')})`,
-              }}
-            >
-              {/* Separator lines */}
-              {Array.from({ length: sections }).map((_, index) => {
-                const angle = (360 / sections) * index - 90; // Start from top
-                return (
-                  <div
-                    key={index}
-                    className="absolute w-1 bg-white opacity-80"
-                    style={{
-                      height: '50%',
-                      left: '50%',
-                      top: '50%',
-                      transformOrigin: 'top',
-                      transform: `translateX(-50%) rotate(${angle}deg)`,
-                    }}
-                  />
-                );
-              })}
+                {/* Wheel */}
+                <div
+                  className="relative w-80 h-80 rounded-full shadow-2xl border-4 border-white dark:border-gray-700"
+                  style={{
+                    transform: `rotate(${rotation}deg)`,
+                    transition: isSpinning ? 'none' : 'transform 1s cubic-bezier(0.17, 0.67, 0.12, 0.99)',
+                    background: `conic-gradient(from -90deg, ${Array.from({ length: sections })
+                      .map((_, i) => {
+                        const color = getSectionColor(i);
+                        const startPercent = (i / sections) * 100;
+                        const endPercent = ((i + 1) / sections) * 100;
+                        return `${color} ${startPercent}% ${endPercent}%`;
+                      })
+                      .join(', ')})`,
+                  }}
+                >
+                  {/* Separator lines */}
+                  {Array.from({ length: sections }).map((_, index) => {
+                    const angle = (360 / sections) * index - 90; // Start from top
+                    return (
+                      <div
+                        key={index}
+                        className="absolute w-1 bg-white opacity-80"
+                        style={{
+                          height: '50%',
+                          left: '50%',
+                          top: '50%',
+                          transformOrigin: 'top',
+                          transform: `translateX(-50%) rotate(${angle}deg)`,
+                        }}
+                      />
+                    );
+                  })}
 
-              {/* Center circle with text */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-32 h-32 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center border-4 border-gray-300 dark:border-gray-600">
-                  {selectedRank && !isSpinning ? (
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-gray-900 dark:text-white">
-                        {selectedRank}
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Rank
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      {isSpinning ? (
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100 mx-auto"></div>
-                      ) : (
-                        <>
-                          <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">
-                            ?
+                  {/* Center circle with text */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center border-4 border-gray-300 dark:border-gray-600">
+                      {selectedRank && !isSpinning ? (
+                        <div className="text-center">
+                          <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                            {selectedRank}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Spin
+                            Rank
                           </div>
-                        </>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          {isSpinning ? (
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100 mx-auto"></div>
+                          ) : (
+                            <>
+                              <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">
+                                ?
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Spin
+                              </div>
+                            </>
+                          )}
+                        </div>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
+
+              {/* Spin Button */}
+              <div className="flex flex-col items-center space-y-4">
+                <Button
+                  onClick={handleSpin}
+                  disabled={disabled || loading || isSpinning}
+                  size="lg"
+                  className="px-12 py-6 text-lg font-semibold"
+                >
+                  {isSpinning
+                    ? "Spinning..."
+                    : loading
+                    ? "Processing..."
+                    : selectedRank
+                    ? "Rank Assigned!"
+                    : "Spin the Wheel"}
+                </Button>
+
+                {loading && !isSpinning && (
+                  <p className="text-sm text-gray-500">
+                    Please wait while your rank is being assigned...
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            <Card>
+              <CardHeader className="text-center">
+                <CardTitle className="text-3xl">Your Result</CardTitle>
+                <CardDescription>Your rank has been assigned</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="text-center space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Name</p>
+                    <p className="text-2xl font-bold">{userName}</p>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Your Rank</p>
+                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-5xl font-bold shadow-lg">
+                      {selectedRank}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-          {/* Spin Button */}
-          <div className="flex flex-col items-center space-y-4">
-            <Button
-              onClick={handleSpin}
-              disabled={disabled || loading || isSpinning}
-              size="lg"
-              className="px-12 py-6 text-lg font-semibold"
-            >
-              {isSpinning
-                ? "Spinning..."
-                : loading
-                ? "Processing..."
-                : selectedRank
-                ? "Rank Assigned!"
-                : "Spin the Wheel"}
-            </Button>
-
-            {loading && !isSpinning && (
-              <p className="text-sm text-gray-500">
-                Please wait while your rank is being assigned...
-              </p>
-            )}
+          {/* Leaderboard Section */}
+          <div className="lg:col-span-1">
+            <ClientLeaderboard />
           </div>
         </div>
       </div>

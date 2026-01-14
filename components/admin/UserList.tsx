@@ -139,7 +139,7 @@ export function UserList() {
                 <div className="flex items-center gap-3">
                   <div className="flex flex-col items-end gap-1">
                     <div className="text-sm">
-                      {user.has_joined ? (
+                      {user.has_joined === true ? (
                         <span className="text-green-600 dark:text-green-400 font-medium">✓ Joined</span>
                       ) : (
                         <span className="text-gray-400 dark:text-gray-500">Not Joined</span>
