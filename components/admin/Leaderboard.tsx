@@ -83,6 +83,7 @@ export function Leaderboard() {
                   <th className="text-left p-2 text-sm font-medium">Rank</th>
                   <th className="text-left p-2 text-sm font-medium">Name</th>
                   <th className="text-left p-2 text-sm font-medium">Code</th>
+                  <th className="text-left p-2 text-sm font-medium">Joined</th>
                   <th className="text-left p-2 text-sm font-medium">Status</th>
                 </tr>
               </thead>
@@ -103,6 +104,13 @@ export function Leaderboard() {
                     </td>
                     <td className="p-2 font-medium">{user.name}</td>
                     <td className="p-2 text-sm text-gray-500">{user.code}</td>
+                    <td className="p-2">
+                      {user.has_joined ? (
+                        <span className="text-sm text-green-600 dark:text-green-400">✓ Yes</span>
+                      ) : (
+                        <span className="text-sm text-gray-400">No</span>
+                      )}
+                    </td>
                     <td className="p-2">
                       {user.rank !== null ? (
                         <span className="text-sm text-green-600 dark:text-green-400">

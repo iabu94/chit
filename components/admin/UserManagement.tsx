@@ -52,6 +52,7 @@ export function UserManagement() {
         code: code,
         rank: null,
         has_participated: false,
+        has_joined: false,
       };
 
       await addDoc(usersCollection, {

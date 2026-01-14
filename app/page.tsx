@@ -6,7 +6,7 @@ import { usersCollection, raffleConfigDoc } from "@/firebase";
 import { userStorage } from "@/lib/utils/storage";
 import { CodeEntry } from "@/components/client/CodeEntry";
 import { WaitingScreen } from "@/components/client/WaitingScreen";
-import { CardGrid } from "@/components/client/CardGrid";
+import { Wheel } from "@/components/client/Wheel";
 import { ResultsDisplay } from "@/components/client/ResultsDisplay";
 import type { User, RaffleConfig } from "@/lib/types";
 
@@ -154,7 +154,7 @@ export default function Home() {
 
   if (state === "card_selection" && user) {
     return (
-      <CardGrid
+      <Wheel
         userName={user.name}
         userId={user.id}
         onCardSelected={handleCardSelected}

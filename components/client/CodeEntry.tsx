@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { getDocs, query, where } from "firebase/firestore";
-import { usersCollection } from "@/firebase";
+import { getDocs, query, where, updateDoc, serverTimestamp } from "firebase/firestore";
+import { usersCollection, getUserDoc } from "@/firebase";
 import { userStorage } from "@/lib/utils/storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,10 +39,27 @@ export function CodeEntry({ onCodeValidated }: CodeEntryProps) {
 
       // Get user data
       const userDoc = snapshot.docs[0];
+      const userId = userDoc.id;
       const userData = {
-        id: userDoc.id,
+        id: userId,
         ...userDoc.data(),
       } as User;
+
+      // Mark user as joined (if not already joined)
+      if (!userData.has_joined) {
+        try {
+          const userRef = getUserDoc(userId);
+          await updateDoc(userRef, {
+            has_joined: true,
+            updated_at: serverTimestamp(),
+          });
+          // Update local userData
+          userData.has_joined = true;
+        } catch (err) {
+          console.error("Error updating joined status:", err);
+          // Continue anyway, don't block the user
+        }
+      }
 
       // Store code in LocalStorage
       userStorage.setCode(userData.code);

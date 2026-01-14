@@ -22,6 +22,7 @@ export interface User {
   code: string; // Unique access code (e.g., "A1B2")
   rank: number | null; // Assigned rank (1 to N) or null
   has_participated: boolean; // Flag to prevent duplicate selections
+  has_joined: boolean; // Flag to track if user has joined (entered their code)
   created_at: Timestamp;
   updated_at: Timestamp;
 }
@@ -35,6 +36,7 @@ export interface UserData {
   code: string;
   rank: number | null;
   has_participated: boolean;
+  has_joined: boolean; // Flag to track if user has joined (entered their code)
   created_at: Timestamp;
   updated_at: Timestamp;
 }
