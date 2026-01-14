@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Raffle config - read by all, write by all (simplified for MVP)
+    // In production, consider using Firebase Auth or Cloud Functions for admin operations
+    match /raffle_config/{configId} {
+      allow read: if true; // All users can read status
+      allow write: if true; // Simplified for MVP - consider restricting in production
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Anyone can read (for leaderboard)
+      allow read: if true;
+      
+      // Users can only update their own document (by code match)
+      // For MVP, allowing create and update for all
+      // In production, restrict creates to admin only
+      allow create: if true; // Simplified for MVP
+      allow update: if true; // Simplified for MVP - transaction handles validation
+      allow delete: if false; // No deletes for MVP
+    }
+  }
+}
