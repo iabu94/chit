@@ -102,15 +102,26 @@ function PaperChitMesh({
         </mesh>
       ) : (
         // Unfolding paper (flat plane)
-        <mesh rotation={[0, 0, 0]}>
-          <planeGeometry args={[2, 2.5]} />
-          <meshStandardMaterial
-            color="#f5f1dc"
-            roughness={0.7}
-            metalness={0.1}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
+        <group>
+          <mesh rotation={[0, 0, 0]}>
+            <planeGeometry args={[2.5, 3]} />
+            <meshStandardMaterial
+              color="#f5f1dc"
+              roughness={0.6}
+              metalness={0.1}
+              side={THREE.DoubleSide}
+            />
+          </mesh>
+          {/* Paper border for depth */}
+          <mesh rotation={[0, 0, 0]} position={[0, 0, -0.001]}>
+            <planeGeometry args={[2.6, 3.1]} />
+            <meshStandardMaterial
+              color="#e8ddb5"
+              roughness={0.8}
+              side={THREE.DoubleSide}
+            />
+          </mesh>
+        </group>
       )}
     </group>
   );
@@ -283,21 +294,10 @@ function ChitsPhysics({
 
 function RankDisplay({ rank, opacity }: { rank: number; opacity: number }) {
   return (
-    <group position={[0, 0, 2.01]}>
+    <group position={[0, 0, 2.02]}>
       <Text
-        fontSize={0.5}
+        fontSize={2.5}
         color="#2c3e50"
-        anchorX="center"
-        anchorY="middle"
-        fontWeight={700}
-        fillOpacity={opacity}
-      >
-        Your Rank
-      </Text>
-      <Text
-        position={[0, -0.5, 0]}
-        fontSize={1.5}
-        color="#e74c3c"
         anchorX="center"
         anchorY="middle"
         fontWeight={900}

@@ -44,20 +44,19 @@ export function Wheel({ userName, userId, onCardSelected, onError }: WheelProps)
     setLoading(true);
 
     try {
-      // Trigger the transaction to get the rank
+      // Start the unfold animation immediately
+      // Wait for the rank from server (unfold animation happens during this)
       const { selectCard } = await import("@/lib/utils/card-selection");
+      const rank = await selectCard(userId);
 
-      // Wait for minimum animation duration (2 seconds) for visual appeal
-      const minAnimationDuration = 2000;
-      const [rank] = await Promise.all([
-        selectCard(userId),
-        new Promise(resolve => setTimeout(resolve, minAnimationDuration))
-      ]);
-
+      // Set the rank so it shows on the paper
       setSelectedRank(rank);
+      setLoading(false);
 
-      // Wait for unfold animation to complete, then notify parent
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Show the rank on the unfolded paper for 5 seconds
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      // Then navigate to results page
       onCardSelected(rank);
     } catch (err) {
       console.error("Card selection error:", err);
@@ -98,11 +97,9 @@ export function Wheel({ userName, userId, onCardSelected, onError }: WheelProps)
               selectedRank={selectedRank}
             />
 
-            {loading && (
+            {disabled && (
               <p className="text-sm text-gray-500 animate-pulse">
-                {selectedRank
-                  ? "Unfolding your chit..."
-                  : "Assigning your rank..."}
+                {loading ? "Unfolding your chit..." : selectedRank ? "Your rank is revealed!" : "Please wait..."}
               </p>
             )}
           </div>
